@@ -1,0 +1,54 @@
+version: "3.5"
+
+services:
+
+    nodejs:
+        container_name: nodejs
+        image: adityaudi/backend-app:latest
+        ports: 
+            - "9000:9000"
+        networks:
+            - networkhub
+        depends_on: 
+            - database
+            - cache
+        environment: 
+            - PORT=9159
+                
+            - DB_NAME=coffeeshop
+            - DB_USER=adityaudi
+            - DB_PASS=22
+            - DB_HOST=database
+            
+            - SECRET_KEY=adityaudi
+
+            - REDIS_HOST=cache
+            - REDIS_PORT=6379
+
+    database:
+        container_name: postgresql
+        image: postgres:latest 
+        ports: 
+            - "5432:5432"
+        networks:
+            - networkhub
+        volumes: 
+            - ./pgdata:/var/lib/postgresql/data 
+        environment: 
+            POSTGRES_PASSWORD: 22
+            POSTGRES_USER: adityaudi
+            POSTGRES_DB: coffeeshop
+
+    cache:
+        container_name: redis 
+        image: redis:alpine
+        ports: 
+            - "6379:6379"
+        networks:   
+            - networkhub
+        volumes: 
+            - ./redisdata:/data
+
+networks:
+    networkhub:
+        name: networkhub
